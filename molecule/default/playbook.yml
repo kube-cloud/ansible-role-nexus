@@ -1,57 +1,8 @@
-# Ansible Role for Nexus
-
-[![Travis](https://img.shields.io/travis/kube-cloud/ansible-role-nexus.svg)](https://travis-ci.org/kube-cloud/ansible-role-nexus)
-[![GitHub release](https://img.shields.io/github/release/kube-cloud/ansible-role-nexus.svg)](https://github.com/kube-cloud/ansible-role-nexus)
-[![GitHub license](https://img.shields.io/github/license/kube-cloud/ansible-role-nexus.svg)](https://github.com/kube-cloud/ansible-role-nexus/blob/master/LICENSE)
-[![Ansible Role](https://img.shields.io/badge/galaxy-kube-cloud.nexus-blue.svg)](https://galaxy.ansible.com/kube-cloud/nexus)
-
-Ansible Role for Atlassian Nexus Installation.
-<a href="https://www.kube-cloud.com/"><img width="300" src="https://kube-cloud.com/images/branding/logo/kubecloud-logo-single_writing_horizontal_color_300x112px.png" /></a>
-<a href="https://www.redhat.com/fr/technologies/management/ansible"><img width="200" src="https://getvectorlogo.com/wp-content/uploads/2019/01/red-hat-ansible-vector-logo.png" /></a>
-<a href="https://www.sonatype.com//"><img width="250" src="https://avatars1.githubusercontent.com/u/44938?s=280&v=4" /></a>
-
-# Supported Version
-
-* Sonatype Nexus 3+
-
-# Supported OS
-
-* CentOS 6/7
-* RedHat 6/7
-* Ubuntu Trusty/Xenial/Bionic
-* Debian Jessie/Strech
-
-# Depend On
-
-* jetune.java (Only Java 1.8 accepted - @see official Sonatype Nexus Prerequisites)
-
-# Usage
-
-* Install Role ``` ansible-galaxy install jetune.nexus ```
-* use in your playbook
-```
 ---
 
 - hosts: all
   become: true
   tasks:
-	
-   # Install Open JDK 8
-   - name: "({{ ansible_distribution }}) - NEXUS::PREPARE - Install OpenJDK 11"
-     include_role:
-      name: jetune.java
-     vars:
-      from_repo: false
-      implementation: OPENJDK
-      v_major: 8
-      v_minor: 40
-      build: 25
-      os: linux
-      arch: x64
-      date: 10_feb_2015
-      checksum: md5:4980716637f353cfb27467d57f2faf9b
-      alternative_priority: 200
-      is_default: true
 
     - name: "Include nexus role"
       import_role:
@@ -73,7 +24,7 @@ Ansible Role for Atlassian Nexus Installation.
         nexus_jvm_minimum_memory: "512m"
         nexus_jvm_maximum_memory: "1024m"
         nexus_jvm_maximum_direct_memory: "1024m"
-        nexus_jvm_log_file: "/kis/rmg/logs/jvm.log"
+        nexus_jvm_log_file: "{{ nexus_logdir | regex_replace('\\/$', '') }}/jvm.log"
         nexus_prefered_ipv4: true
         nexus_application_host: "0.0.0.0"
         nexus_application_port: 8080

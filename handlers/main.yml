@@ -1,0 +1,15 @@
+---
+
+- name: systemctl daemon-reload
+  systemd:
+    daemon_reload: true
+  changed_when: false
+  ignore_errors: true
+
+- name: systemctl restart
+  service:
+    name: "nexus"
+    state: "restarted"
+  run_once: true
+  changed_when: false
+  ignore_errors: true

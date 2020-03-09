@@ -1,0 +1,30 @@
+---
+
+# Ensure the script to add is ungeristered
+- name: "({{ ansible_distribution }}) NX::API::FN::RM-SCRIPT - Ensure the script to add ({{ item }}) is ungeristered"
+  uri:
+    url: "{{ _nexus_internal_scheme }}://{{ _nexus_internal_host }}:{{ _nexus_internal_port }}\
+      {{ _nexus_internal_context }}{{ _nexus_api_script_uri }}/{{ item }}"
+    user: "{{ _nexus_default_user }}"
+    password: "{{ current_admin_password }}"
+    method: DELETE
+    force_basic_auth: true
+    status_code: 204,404
+    validate_certs: "{{ nexus_api_validate_certs }}"
+
+# Ensure the script to add is created
+- name: "({{ ansible_distribution }}) NX::API::FN::CREATE-SCRIPT - Ensure the script to add ({{ item }}) is created"
+  uri:
+    url: "{{ _nexus_internal_scheme }}://{{ _nexus_internal_host }}:{{ _nexus_internal_port }}\
+      {{ _nexus_internal_context }}{{ _nexus_api_script_uri }}"
+    user: "{{ _nexus_default_user }}"
+    password: "{{ current_admin_password }}"
+    method: POST
+    body_format: json
+    force_basic_auth: true
+    status_code: 204
+    validate_certs: "{{ nexus_api_validate_certs }}"
+    body:
+      name: "{{ item }}"
+      type: 'groovy'
+      content: "{{ lookup('file', 'scripts/groovy/' + item + '.groovy') }}"

@@ -1,0 +1,226 @@
+---
+
+# Generate Configurations from templates
+- name: "({{ ansible_distribution }}) NX::CONFIG - Generate Configurations from templates"
+  template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default(nexus_owner) }}"
+    group: "{{ item.group | default(nexus_group) }}"
+    mode: "{{ item.mode | default(_nexus_file_mode) }}"
+    backup: true
+  loop:
+    - { src: "bin/nexus.vmoptions.j2", dest: "{{ _nexus_installdir }}/bin/nexus.vmoptions" }
+    - { src: "bin/nexus.rc.j2", dest: "{{ _nexus_installdir }}/bin/nexus.rc" }
+    - { src: "etc/nexus.properties.j2", dest: "{{ _nexus_datadir }}/etc/nexus.properties" }
+    - { src: "etc/logback/logback-access.xml.j2", dest: "{{ _nexus_installdir }}/etc/logback/logback-access.xml" }
+    - { src: "etc/logback/logback.xml.j2", dest: "{{ _nexus_installdir }}/etc/logback/logback.xml" }
+    - { src: "etc/karaf/config.properties.j2", dest: "{{ _nexus_installdir }}/etc/karaf/config.properties" }
+    - { src: "etc/karaf/custom.properties.j2", dest: "{{ _nexus_installdir }}/etc/karaf/custom.properties" }
+    - { src: "etc/karaf/java.util.logging.properties.j2", dest: "{{ _nexus_installdir }}/etc/karaf/java.util.logging.properties" }
+    - { src: "etc/karaf/jmx.acl.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/jmx.acl.cfg" }
+    - { src: "etc/karaf/jre.properties.j2", dest: "{{ _nexus_installdir }}/etc/karaf/jre.properties" }
+    - { src: "etc/karaf/org.apache.felix.fileinstall-deploy.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.apache.felix.fileinstall-deploy.cfg" }
+    - { src: "etc/karaf/org.apache.karaf.features.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.apache.karaf.features.cfg" }
+    - { src: "etc/karaf/org.apache.karaf.features.xml.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.apache.karaf.features.xml" }
+    - { src: "etc/karaf/org.apache.karaf.jaas.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.apache.karaf.jaas.cfg" }
+    - { src: "etc/karaf/org.apache.karaf.kar.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.apache.karaf.kar.cfg" }
+    - { src: "etc/karaf/org.apache.karaf.log.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.apache.karaf.log.cfg" }
+    - { src: "etc/karaf/org.apache.karaf.management.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.apache.karaf.management.cfg" }
+    - { src: "etc/karaf/org.apache.karaf.service.acl.command.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.apache.karaf.service.acl.command.cfg" }
+    - { src: "etc/karaf/org.apache.karaf.shell.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.apache.karaf.shell.cfg" }
+    - { src: "etc/karaf/org.ops4j.pax.logging.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.ops4j.pax.logging.cfg" }
+    - { src: "etc/karaf/org.ops4j.pax.url.mvn.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/org.ops4j.pax.url.mvn.cfg" }
+    - { src: "etc/karaf/profile.cfg.j2", dest: "{{ _nexus_installdir }}/etc/karaf/profile.cfg" }
+    - { src: "etc/karaf/scripts/shell.completion.script.j2", dest: "{{ _nexus_installdir }}/etc/karaf/scripts/shell.completion.script" }
+    - { src: "etc/karaf/shell.init.script.j2", dest: "{{ _nexus_installdir }}/etc/karaf/shell.init.script" }
+    - { src: "etc/karaf/startup.properties.j2", dest: "{{ _nexus_installdir }}/etc/karaf/startup.properties" }
+    - { src: "etc/karaf/system.properties.j2", dest: "{{ _nexus_installdir }}/etc/karaf/system.properties" }
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+# Initialize nexus service for service manager is of systemd
+- name: "({{ ansible_distribution }}) NX::CONFIG - Initialize nexus service for service manager is of systemd"
+  block:
+
+    # Generate Configurations from templates
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Generate Configurations from templates"
+      template:
+        src: "systemd/nexus.service.j2"
+        dest: "{{ _nexus_service_dir }}/nexus.service"
+        owner: "root"
+        group: "root"
+        mode: "u+rw-x,g+r-wx,o+r-wx"
+        backup: true
+      notify: systemctl daemon-reload
+      tags:
+        - nexus
+        - molecule-idempotence-notest
+
+    # Enable and Start nexus service (generate default admin password file on first start)
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Enable and Start nexus service"
+      systemd:
+        name: "nexus.service"
+        state: started
+        enabled: true
+        no_block: true
+      changed_when: false
+      failed_when: false
+      check_mode: false
+
+  when: "ansible_service_mgr == 'systemd'"
+
+# Initialize nexus service for service manager is of systemd
+- name: "({{ ansible_distribution }}) NX::CONFIG - Initialize nexus service for service manager is of systemd"
+  block:
+
+    # Create symlink for init.d nexus service
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Create symlink for init.d nexus service"
+      file:
+        src: "{{ _nexus_installdir }}/bin/nexus"
+        dest: "/etc/init.d/nexus"
+        owner: "{{ nexus_owner }}"
+        group: "{{ nexus_group }}"
+        state: link
+
+    # Enable and Start nexus service (generate default admin password file on first start)
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Enable and Start nexus service"
+      service:
+        name: "nexus"
+        state: started
+        enabled: true
+      tags:
+        - nexus
+        - molecule-idempotence-notest
+
+  when: "ansible_service_mgr != 'systemd'"
+
+# Wait for nexus administrator password file available
+- name: "({{ ansible_distribution }}) NX::CONFIG - Wait for nexus administrator password file available"
+  wait_for:
+    path: "{{ _nexus_default_password_file }}"
+    sleep: 3
+    state: present
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+# Check if generated administrator password file exists
+- name: "({{ ansible_distribution }}) NX::CONFIG - Check if generated administrator password file exists"
+  stat:
+    path: "{{ _nexus_default_password_file }}"
+  register: nexus_default_password_file
+  changed_when: false
+  failed_when: false
+  check_mode: false
+
+# Read base64 encoded password from file
+- name: "({{ ansible_distribution }}) NX::CONFIG::BLOCK - Slurp content of remote generated password file"
+  slurp:
+    src: "{{ _nexus_default_password_file }}"
+  register: slurped_content
+
+# Decode encoded password
+- name: "({{ ansible_distribution }}) NX::CONFIG::BLOCK - Decode encoded password"
+  set_fact:
+    initial_admin_password: "{{ slurped_content.content | b64decode }}"
+
+# Ensure the default admin password is defined
+- name: "({{ ansible_distribution }}) NX::CONFIG - Ensure the default admin password is defined"
+  fail:
+    msg: >-
+      Failed to extract the initial administrator password.
+      Ensure that the file "{{ _nexus_default_password_file }}" exists.
+  when: initial_admin_password is not defined
+
+# Initialize current password
+- name: "({{ ansible_distribution }}) NX::CONFIG::BLOCK - Decode encoded password"
+  set_fact:
+    current_admin_password: "{{ initial_admin_password }}"
+  when:
+    - current_admin_password is not defined or current_admin_password != nexus_administrator_password
+
+# Wait for nexus iap availaible
+- name: "({{ ansible_distribution }}) NX::CONFIG - Wait for nexus API availaible"
+  uri:
+    url: "{{ _nexus_internal_scheme }}://{{ _nexus_internal_host }}:{{ _nexus_internal_port }}\
+      {{ _nexus_internal_context }}{{ _nexus_api_script_uri }}"
+    user: "{{ _nexus_default_user }}"
+    password: "{{ current_admin_password }}"
+    method: "HEAD"
+    force_basic_auth: true
+    status_code: 200,202,203,204,404
+    validate_certs: "{{ nexus_api_validate_certs }}"
+  register: apiresponse
+  until: apiresponse.status in [200, 202, 203, 204, 404]
+  delay: 5
+  retries: 50
+  tags:
+    - molecule-idempotence-notest
+
+# Register scripts on nexus instance
+- name: "({{ ansible_distribution }}) NX::CONFIG - Register script in nexus instance"
+  include_tasks: zz-register-script.yml
+  loop:
+    - "configure_email"
+    - "configure_proxy"
+    - "configure_admin_password"
+    - "delete_repository"
+  tags:
+    - molecule-idempotence-notest
+
+# Initialize Email Server Configuration
+- name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Email Server Configuration"
+  include_tasks: zz-execute-script.yml
+  vars:
+    script_name: configure_email
+    arguments:
+      enabled: "{{ nexus_email_server_enabled }}"
+      host: "{{ nexus_email_server_host }}"
+      port: "{{ nexus_email_server_port }}"
+      username: "{{ nexus_email_server_username }}"
+      password: "{{ nexus_email_server_password }}"
+      fromAddress: "{{ nexus_email_from_address }}"
+      subjectPrefix: "{{ nexus_email_subject_prefix }}"
+      startTlsEnabled: "{{ nexus_email_tls_enabled }}"
+      startTlsRequired: "{{ nexus_email_tls_required }}"
+      sslOnConnectEnabled: "{{ nexus_email_ssl_on_connect_enabled }}"
+      sslCheckServerIdentityEnabled: "{{ nexus_email_ssl_check_server_identity_enabled }}"
+      nexusTrustStoreEnabled: "{{ nexus_email_trust_store_enabled }}"
+  when:
+    - nexus_email_server_enabled|bool
+  tags:
+    - molecule-idempotence-notest
+
+# Initialize Proxy Server Configuration
+- name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Proxy Server Configuration"
+  include_tasks: zz-execute-script.yml
+  vars:
+    script_name: configure_proxy
+    arguments:
+      httpProxyEnabled: "{{ nexus_http_proxy_enabled }}"
+      httpProxyHost: "{{ nexus_http_proxy_host }}"
+      httpProxyPort: "{{ nexus_http_proxy_port }}"
+      httpProxyUsername: "{{ nexus_http_proxy_username }}"
+      httpProxyPassword: "{{ nexus_http_proxy_password }}"
+      httpsProxyEnabled: "{{ nexus_https_proxy_enabled }}"
+      httpsProxyHost: "{{ nexus_https_proxy_host }}"
+      httpsProxyPort: "{{ nexus_https_proxy_port }}"
+      httpsProxyUsername: "{{ nexus_https_proxy_username }}"
+      httpsProxyPassword: "{{ nexus_https_proxy_password }}"
+      nonProxyHosts: "{{ nexus_non_proxy_hosts }}"
+  when: nexus_http_proxy_enabled or nexus_https_proxy_enabled
+  tags:
+    - molecule-idempotence-notest
+
+# Initialize New Administrator password
+- name: "({{ ansible_distribution }}) NX::CONFIG - Initialize New Administrator password"
+  include_tasks: zz-execute-script.yml
+  vars:
+    script_name: configure_admin_password
+    arguments:
+      adminUserName: "{{ nexus_adminitrator_user }}"
+      newAdminPassword: "{{ nexus_administrator_password }}"
+  tags:
+    - molecule-idempotence-notest

@@ -1,0 +1,10 @@
+# Jetty section
+application-port={{ nexus_application_port }}
+application-host={{ nexus_application_host }}
+nexus-context-path={{ nexus_application_context_path }}
+nexus-args=${jetty.etc}/jetty.xml,${jetty.etc}/jetty-http.xml,${jetty.etc}/jetty-requestlog.xml
+
+# Nexus section
+nexus-edition={{ nexus_edition }}
+nexus-features={{ nexus_features }}
+nexus.hazelcast.discovery.isEnabled={{ nexus_hazelcast_discovery | lower }}

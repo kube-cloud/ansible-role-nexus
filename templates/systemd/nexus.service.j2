@@ -1,0 +1,14 @@
+[Unit]
+Description=Kube Cloud Nexus OSS Repository Manager Service
+After=network.target
+
+[Service]
+Type=forking
+LimitNOFILE=65536
+ExecStart={{ nexus_installdir }}/bin/nexus start
+ExecStop={{ nexus_installdir }}/bin/nexus stop
+User={{ nexus_owner }}
+Restart=on-abort
+  
+[Install]
+WantedBy=multi-user.target

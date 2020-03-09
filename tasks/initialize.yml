@@ -1,0 +1,131 @@
+---
+
+# Find User (nexus service owner) in Passwd Database
+- name: "({{ ansible_distribution }}) NX::INIT - Find Nexus Owner in passwd database"
+  getent:
+    database: passwd
+    key: "{{ nexus_owner }}"
+    fail_key: false
+
+# Find Group (nexus service group) in Group Database
+- name: "({{ ansible_distribution }}) NX::INIT - Find nexus Owner group in groups database"
+  getent:
+    database: group
+    key: "{{ nexus_group }}"
+    fail_key: false
+
+# Find Java major version if installed
+- name: "({{ ansible_distribution }}) NX::INIT - Find Java major version if installed"
+  shell:
+  args:
+    cmd: java -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d '.' -f1
+  register: java_major_version_run
+  tags:
+    - molecule-idempotence-notest
+
+# Find Java major minor if installed
+- name: "({{ ansible_distribution }}) NX::INIT - Find Java minor version if installed"
+  shell:
+  args:
+    cmd: java -version 2>&1 | awk -F '"' '/version/ {print $2}' | cut -d '.' -f2
+  register: java_minor_version_run
+  tags:
+    - molecule-idempotence-notest
+
+# Fail if Java is not installed
+- name: "({{ ansible_distribution }}) NX::INIT - Fail if Java is not installed"
+  fail:
+    msg: "Java runtime (1.8) must be installed as prerequisite (actually only this version is supported)"
+  when:
+    - not (java_major_version_run.stdout == "1")
+    - not (java_minor_version_run.stdout == "8")
+  tags:
+    - molecule-idempotence-notest
+
+# Fail if Java is not installed
+- name: "({{ ansible_distribution }}) NX::INIT - Fail if Java is not installed"
+  fail:
+    msg: "Java runtime must be installed as prerequisite"
+  when:
+    - java_major_version_run.rc != 0
+  tags:
+    - molecule-idempotence-notest
+
+# Define commons facts for roles
+- name: "({{ ansible_distribution }}) NX::INIT - Define commons facts for roles"
+  set_fact:
+    nexus_owner_exists: "{{ getent_passwd[nexus_owner] != None }}"
+    nexus_group_exists: "{{ getent_group[nexus_group] != None }}"
+    _nexus_create_home: "{{ '--create-home' if nexus_create_home else '' }}"
+    _nexus_owner_system: "{{ '--system' if nexus_owner_system else '' }}"
+    _nexus_file_mode: "0755"
+    _nexus_extracted_dir: "/tmp/nexus_extracted"
+    _nexus_installdir: "{{ nexus_installdir | regex_replace('\/$', '') }}"
+    _nexus_datadir: "{{ nexus_datadir | regex_replace('\/$', '') }}"
+    _nexus_logdir: "{{ nexus_logdir | regex_replace('\/$', '') }}"
+    _nexus_tempdir: "{{ nexus_tempdir | regex_replace('\/$', '') }}"
+    _nexus_configdir: "{{ nexus_configdir | regex_replace('\/$', '') }}"
+    _nexus_etcdir: "{{ nexus_etcdir | regex_replace('\/$', '') }}"
+    _nexus_pid_dir: "{{ nexus_pid_dir | regex_replace('\/$', '') }}"
+    _nexus_service_dir: "/etc/systemd/system"
+    _nexus_historydir: "{{ nexus_datadir | regex_replace('\/$', '') }}/history"
+    _karaf_lock_dir: "{{ karaf_lock_dir | regex_replace('\/$', '') }}"
+    _nexus_internal_scheme: "http"
+    _nexus_internal_host: "localhost"
+    _nexus_internal_port: "{{ nexus_application_port }}"
+    _nexus_internal_context: "{{ nexus_application_context_path | regex_replace('\/$', '') }}"
+    _nexus_default_password_file: "{{ nexus_datadir | regex_replace('\/$', '') }}/admin.password"
+    _nexus_default_user: "admin"
+    _nexus_api_script_uri: "{{ (nexus_version is version('3.8.0', '<')) | ternary('/service/siesta/rest/v1/script', '/service/rest/v1/script') }}"
+
+# Create group if not exists
+- name: "({{ ansible_distribution }}) NX::INIT - Create group if not exists"
+  group:
+    name: "{{ nexus_group }}"
+    system: true
+    state: present
+  tags: nexus
+  when:
+    - not nexus_group_exists|bool
+
+- name: "({{ ansible_distribution }}) NX::INIT - Create owner if not exists"
+  shell:
+  args:
+    cmd: "useradd {{ nexus_owner }} --home {{ nexus_datadir }} --shell {{ nexus_shell }} \
+     -g {{ nexus_group }} {{ _nexus_owner_system }} {{ _nexus_create_home }}"
+  tags:
+    - nexus
+    - molecule-idempotence-notest
+  when:
+    - not nexus_owner_exists|bool
+
+# Prepare directories
+- name: "({{ ansible_distribution }}) NX::INIT - Prepare directories"
+  file:
+    dest: "{{ item.dest }}"
+    owner: "{{ item.owner | default(nexus_owner) }}"
+    group: "{{ item.group | default(nexus_group) }}"
+    mode: "{{ item.mode | default(_nexus_file_mode) }}"
+    state: "{{ item.state | default('directory') }}"
+  loop:
+    - dest: "/etc/init.d"
+      owner: "root"
+      group: "root"
+    - dest: "/lib/systemd/system"
+      owner: "root"
+      group: "root"
+    - dest: "{{ nexus_download_details.dest | dirname }}"
+      owner: "root"
+      group: "root"
+    - dest: "{{ _nexus_extracted_dir }}"
+    - dest: "{{ _nexus_datadir }}"
+    - dest: "{{ _nexus_installdir }}"
+    - dest: "{{ _nexus_logdir }}"
+    - dest: "{{ _nexus_tempdir }}"
+    - dest: "{{ _nexus_configdir }}"
+    - dest: "{{ _nexus_datadir }}/{{ _nexus_etcdir }}"
+    - dest: "{{ _nexus_datadir }}/{{ _nexus_etcdir }}/karaf"
+    - dest: "{{ _nexus_pid_dir }}"
+    - dest: "{{ _nexus_historydir }}"
+    - dest: "{{ _karaf_lock_dir }}"
+  tags: nexus

@@ -1,0 +1,215 @@
+---
+
+# Nexus version.
+nexus_version: "3.21.1-01"
+
+# Nexus download base URL.
+nexus_download_base_url: "https://sonatype-download.global.ssl.fastly.net/repository/repositoryManager/3/"
+
+# Nexus archive file name
+nexus_archive_file_name: "nexus-{{ nexus_version }}-unix.tar.gz"
+
+# Nexus download base URL (Checksum generated with : openssl sha1 /path/to/nexus/archive.tar.gz).
+nexus_download_details:
+  url: "{{ nexus_download_base_url }}/{{ nexus_archive_file_name }}"
+  dest: "/tmp/{{ nexus_archive_file_name }}"
+  checksum: "sha1:87b52cfdfdb9f49d3a1d0d0c49bc7e0eee80dd14"
+
+# Nexus Owner
+nexus_owner: "nexus"
+
+# Nexus Group
+nexus_group: "nexus"
+
+# Flag for home creation (when owner is created by the role)
+nexus_create_home: false
+
+# Flag for owner created as system user (when owner is created by the role)
+nexus_owner_system: true
+
+# Nexus owner shell (when owner is created by the role)
+nexus_shell: "/usr/sbin/nologin"
+
+# Nexus Install directory
+nexus_installdir: "/opt/sonatype/nexus-{{ nexus_version }}"
+
+# Nexus Data directory
+nexus_datadir: "/var/lib/sonatype-work/nexus"
+
+# Nexus Log directory
+nexus_logdir: "{{ nexus_datadir | regex_replace('\\/$', '') }}/logs"
+
+# Nexus Temp directory
+nexus_tempdir: "{{ nexus_datadir | regex_replace('\\/$', '') }}/tmp"
+
+# Nexus Config directory
+nexus_configdir: "{{ nexus_datadir | regex_replace('\\/$', '') }}/configuration"
+
+# Nexus etc dir (relative to )
+nexus_etcdir: "etc"
+
+# Nexus Karaf etc (configuration) directory (Relative to Karaf Home/Base)
+nexus_karaf_etcdir: "{{ nexus_etcdir }}/karaf"
+
+# Nexus Karaf Logging cofiguration file (Relative to Karaf Home/Base)
+nexus_karaf_logging_config_file: "{{ nexus_karaf_etcdir | regex_replace('\\/$', '') }}/java.util.logging.properties"
+
+# Nexus Karaf Log directory
+nexus_karaf_logdir: "{{ nexus_logdir | regex_replace('\\/$', '') }}"
+
+# Nexus Temp directory
+nexus_karaf_tempdir: "{{ nexus_tempdir | regex_replace('\\/$', '') }}"
+
+# Karaf data directory
+nexus_karaf_datadir: "{{ nexus_datadir | regex_replace('\\/$', '') }}/karaf"
+
+# Nexus start location console
+nexus_karaf_start_location_console: false
+
+# Karaf Lock dir
+karaf_lock_dir: "{{ nexus_datadir | regex_replace('\\/$', '') }}/lock"
+
+# Karaf local user console
+karaf_local_user_console: "karaf"
+
+# Karaf Cache Cleaning on restart
+karaf_data_cache_clean: true
+
+# Karaf Datas Cleaning All on restart
+karaf_data_clean_all: false
+
+# Karaf shell max file size
+karaf_shell_history_file_max_size: 10000
+
+# Karaf Shell history max size
+karaf_shell_history_max_size: 500
+
+# Karaf Instance name
+karaf_instance_name: "Karaf"
+
+# JVM parameters
+nexus_jvm_minimum_memory: "512m"
+nexus_jvm_maximum_memory: "1024m"
+nexus_jvm_maximum_direct_memory: "1024m"
+nexus_jvm_log_file: "{{ nexus_logdir | regex_replace('\\/$', '') }}/jvm.log"
+nexus_prefered_ipv4: true
+
+# Orientdb profiler memory check interval (in millisecond)
+orientdb_profiler_memory_check_interval: 3600000
+
+# Orientdb memory Chuck size
+orientdb_memory_chunck_size: 268435456
+
+# Orient DB index prefetch size
+orientdb_index_cursor_prefetch_size: 10000
+
+# OrientDB distributed shutdown timeout
+orientdb_distributed_shutdown_timeout: 20000
+
+# OrientDB Disk cache free space limit
+orientdb_storage_disk_cache_free_space_limit: 4096
+
+# JLine reader support parsed line
+jline_reader_support_parsed_line: true
+
+# Nexus application listen host
+nexus_application_host: "0.0.0.0"
+
+# Nexus application listen port
+nexus_application_port: 8080
+
+# Nexus application context path
+nexus_application_context_path: "/"
+
+# Nexus edition
+nexus_edition: "nexus-pro-edition"
+
+# Nexus edition
+nexus_features: "nexus-pro-feature"
+
+# Nexus hazelcast discovery
+nexus_hazelcast_discovery: true
+
+# Nexus PID directory
+nexus_pid_dir: "/var/run/nexus"
+
+# Nexus timezone
+nexus_timezone: "UTC"
+
+# Nexus API Validate certs
+nexus_api_validate_certs: false
+
+# Nexus Email configuration enabled
+nexus_email_server_enabled: true
+
+# Nexus Email server host
+nexus_email_server_host: "ssl0.ovh.net"
+
+# Nexus Email server port
+nexus_email_server_port: 465
+
+# Nexus Email server username
+nexus_email_server_username: "your.mail@your.dns.com"
+
+# Nexus Nexus Email server user password
+nexus_email_server_password: "your.password"
+
+# Nexus Email from address
+nexus_email_from_address: "your.mail@your.dns.com"
+
+# Nexus Email subject prefix
+nexus_email_subject_prefix: "[Nexus]"
+
+# Nexus email server TLS enabled
+nexus_email_tls_enabled: true
+
+# Nexus Email server TLS required
+nexus_email_tls_required: true
+
+# Nexus Email server SSL On Connect enabled
+nexus_email_ssl_on_connect_enabled: true
+
+# Nexus Email server SSL check server identity enabled
+nexus_email_ssl_check_server_identity_enabled: true
+
+# Nexus Email server trustore enabled
+nexus_email_trust_store_enabled: true
+
+# Nexus Http proxy enabled
+nexus_http_proxy_enabled: false
+
+# Nexus Http proxy host
+nexus_http_proxy_host: ""
+
+# Nexus Http proxy port
+nexus_http_proxy_port: 80
+
+# Nexus Http proxy username
+nexus_http_proxy_username: ""
+
+# Nexus Http proxy password
+nexus_http_proxy_password: ""
+
+# Nexus Https proxy enabled
+nexus_https_proxy_enabled: false
+
+# Nexus Https proxy host
+nexus_https_proxy_host: ""
+
+# Nexus Https proxy port
+nexus_https_proxy_port: 443
+
+# Nexus Https proxy username
+nexus_https_proxy_username: ""
+
+# Nexus Https proxy password
+nexus_https_proxy_password: ""
+
+# Nexus Https proxy Non proxy host adresses
+nexus_non_proxy_hosts: ""
+
+# Nexus administrator User
+nexus_adminitrator_user: "admin"
+
+# Nexus administrator password
+nexus_administrator_password: "admin"

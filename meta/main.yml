@@ -1,0 +1,33 @@
+---
+galaxy_info:
+    author: jetune
+    role_name: nexus
+    description: Ansible Role for Sonatype Nexus Installation
+    company: "Kube Cloud"
+    issue_tracker_url: https://github.com/kube-cloud/ansible-role-nexus.git
+    license: "license (Apache 2.0)"
+    min_ansible_version: 2.9
+    github_branch: master
+    platforms:
+        - name: EL
+          versions:
+              - 6
+              - 7
+        - name: Debian
+          versions:
+              - jessie
+              - strech
+        - name: Ubuntu
+          versions:
+              - trusty
+              - xenial
+              - bionic
+    galaxy_tags:
+        - development
+        - scm
+        - vcs
+        - system
+        - atlassian
+        - linux
+
+dependencies: []

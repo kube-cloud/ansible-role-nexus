@@ -1,0 +1,55 @@
+-Xms{{ nexus_jvm_minimum_memory }}
+-Xmx{{ nexus_jvm_maximum_memory }}
+-XX:MaxDirectMemorySize={{ nexus_jvm_maximum_direct_memory }}
+-XX:+UnlockDiagnosticVMOptions
+-XX:+LogVMOutput
+-XX:LogFile={{ nexus_jvm_log_file }}
+-XX:-OmitStackTraceInFastThrow
+-Djava.net.preferIPv4Stack={{ nexus_prefered_ipv4 | lower }}
+-Dnexus.history={{ _nexus_historydir }}
+-Dkaraf.home={{ _nexus_installdir }}
+-Dkaraf.base={{ _nexus_installdir }}
+-Dkaraf.etc={{ _nexus_etcdir }}/karaf
+-Djava.util.logging.config.file={{ _nexus_etcdir }}/karaf/java.util.logging.properties
+-Dkaraf.data={{ _nexus_datadir }}
+-Dkaraf.log={{ _nexus_logdir }}
+-Djava.io.tmpdir={{ _nexus_tempdir }}
+-Dkaraf.startLocalConsole={{ nexus_karaf_start_location_console | lower }}
+-Dkaraf.piddir={{ _nexus_pid_dir }}
+-Dkaraf.lockdir={{ _karaf_lock_dir }}
+-Dkaraf.local.user.console={{ karaf_local_user_console }}
+-Dkaraf.data.cache.clean={{ karaf_data_cache_clean | lower }}
+-Dkaraf.data.clean.all={{ karaf_data_clean_all | lower }}
+-Dkaraf.shell.history.file.max.size={{ karaf_shell_history_file_max_size }}
+-Dkaraf.shell.history.max.size={{ karaf_shell_history_max_size }}
+-Dkaraf.instance.name={{ karaf_instance_name }}
+-Dorientdb.profiler.memory.check.interval={{ orientdb_profiler_memory_check_interval }}
+-Dorientdb.memory.chunck.size={{ orientdb_memory_chunck_size }}
+-Dorientdb.index.cursor.prefetch.size={{ orientdb_index_cursor_prefetch_size }}
+-Dorientdb.distributed.shutdown.timeout={{ orientdb_distributed_shutdown_timeout }}
+-Dorientdb.storage.disk.cache.free.space.limit={{ orientdb_storage_disk_cache_free_space_limit }}
+-Djline.reader.support.parsed.line={{ jline_reader_support_parsed_line | lower }}
+-Duser.home={{ _nexus_datadir }}
+-Duser.timezone={{ nexus_timezone }}"
+-Djava.endorsed.dirs={{ _nexus_installdir }}/lib/endorsed
+#
+# additional vmoptions needed for Java9+
+#
+# --add-reads=java.xml=java.logging
+# --add-exports=java.base/org.apache.karaf.specs.locator=java.xml,ALL-UNNAMED
+# --patch-module=java.base=lib/endorsed/org.apache.karaf.specs.locator-4.2.6.jar
+# --patch-module=java.xml=lib/endorsed/org.apache.karaf.specs.java.xml-4.2.6.jar
+# --add-opens=java.base/java.security=ALL-UNNAMED
+# --add-opens=java.base/java.net=ALL-UNNAMED
+# --add-opens=java.base/java.lang=ALL-UNNAMED
+# --add-opens=java.base/java.util=ALL-UNNAMED
+# --add-opens=java.naming/javax.naming.spi=ALL-UNNAMED
+# --add-opens=java.rmi/sun.rmi.transport.tcp=ALL-UNNAMED
+# --add-exports=java.base/sun.net.www.protocol.http=ALL-UNNAMED
+# --add-exports=java.base/sun.net.www.protocol.https=ALL-UNNAMED
+# --add-exports=java.base/sun.net.www.protocol.jar=ALL-UNNAMED
+# --add-exports=jdk.xml.dom/org.w3c.dom.html=ALL-UNNAMED
+# --add-exports=jdk.naming.rmi/com.sun.jndi.url.rmi=ALL-UNNAMED
+#
+# comment out this vmoption when using Java9+
+#

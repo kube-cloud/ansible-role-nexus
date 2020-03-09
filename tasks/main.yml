@@ -1,0 +1,13 @@
+---
+
+# Include initialize tasks
+- name: "({{ ansible_distribution }}) NX::MAIN - Include initialize tasks"
+  include_tasks: "initialize.yml"
+
+# Include install tasks
+- name: "({{ ansible_distribution }}) NX::MAIN - Include install tasks"
+  include_tasks: "install.yml"
+
+# Include configure tasks
+- name: "({{ ansible_distribution }}) NX::MAIN - Include configure tasks"
+  include_tasks: "configure.yml"
