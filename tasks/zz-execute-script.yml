@@ -13,6 +13,3 @@
     force_basic_auth: true
     validate_certs: "{{ nexus_api_validate_certs }}"
     body: "{{ arguments | to_json }}"
-    tags:
-      - nexus
-      - molecule-idempotence-notest
