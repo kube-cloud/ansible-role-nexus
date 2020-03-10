@@ -3,13 +3,13 @@
 [![Travis](https://img.shields.io/travis/kube-cloud/ansible-role-nexus.svg)](https://travis-ci.org/kube-cloud/ansible-role-nexus)
 [![GitHub release](https://img.shields.io/github/release/kube-cloud/ansible-role-nexus.svg)](https://github.com/kube-cloud/ansible-role-nexus)
 [![GitHub license](https://img.shields.io/github/license/kube-cloud/ansible-role-nexus.svg)](https://github.com/kube-cloud/ansible-role-nexus/blob/master/LICENSE)
-[![Ansible Role](https://img.shields.io/badge/galaxy-kube-cloud.nexus-blue.svg)](https://galaxy.ansible.com/kube-cloud/nexus)
+[![Ansible Role](https://img.shields.io/ansible/role/d/47147.svg?style=flat)](https://galaxy.ansible.com/kube-cloud/nexus)
 
 Ansible Role for Atlassian Nexus Installation.
 
 <a href="https://www.kube-cloud.com/"><img width="300" src="https://kube-cloud.com/images/branding/logo/kubecloud-logo-single_writing_horizontal_color_300x112px.png" /></a>
 <a href="https://www.redhat.com/fr/technologies/management/ansible"><img width="200" src="https://getvectorlogo.com/wp-content/uploads/2019/01/red-hat-ansible-vector-logo.png" /></a>
-<a href="https://www.sonatype.com//"><img width="250" src="https://avatars1.githubusercontent.com/u/44938?s=280&v=4" /></a>
+<a href="https://www.sonatype.com//"><img width="200" src="https://avatars1.githubusercontent.com/u/44938?s=280&v=4" /></a>
 
 # Supported Version
 
