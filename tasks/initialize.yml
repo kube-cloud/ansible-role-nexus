@@ -69,7 +69,7 @@
     _nexus_pid_dir: "{{ nexus_pid_dir | regex_replace('\\/$', '') }}"
     _nexus_service_dir: "/etc/systemd/system"
     _nexus_historydir: "{{ nexus_datadir | regex_replace('\\/$', '') }}/history"
-    _karaf_lock_dir: "{{ karaf_lock_dir | regex_replace('\\/$', '') }}"
+    _nexus_karaf_lock_dir: "{{ nexus_karaf_lock_dir | regex_replace('\\/$', '') }}"
     _nexus_internal_scheme: "http"
     _nexus_internal_host: "localhost"
     _nexus_internal_port: "{{ nexus_application_port }}"
@@ -127,5 +127,5 @@
     - dest: "{{ _nexus_datadir }}/{{ _nexus_etcdir }}/karaf"
     - dest: "{{ _nexus_pid_dir }}"
     - dest: "{{ _nexus_historydir }}"
-    - dest: "{{ _karaf_lock_dir }}"
+    - dest: "{{ _nexus_karaf_lock_dir }}"
   tags: nexus

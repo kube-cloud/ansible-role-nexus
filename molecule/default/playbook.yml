@@ -43,14 +43,16 @@
         nexus_email_ssl_on_connect_enabled: true
         nexus_email_ssl_check_server_identity_enabled: true
         nexus_email_trust_store_enabled: true
-        httpProxyEnabled: false
-        httpProxyHost: ""
-        httpProxyPort: 80
-        httpProxyUsername: ""
-        httpProxyPassword: ""
-        httpsProxyEnabled: false
-        httpsProxyHost: ""
-        httpsProxyPort: 443
-        httpsProxyUsername: ""
-        httpsProxyPassword: ""
-        nonProxyHosts: ""
+        nexus_http_proxy_enabled: false
+        nexus_http_proxy_host: ""
+        nexus_http_proxy_port: 80
+        nexus_http_proxy_username: ""
+        nexus_http_proxy_password: ""
+        nexus_https_proxy_enabled: false
+        nexus_https_proxy_host: ""
+        nexus_https_proxy_port: 443
+        nexus_https_proxy_username: ""
+        nexus_https_proxy_password: ""
+        nexus_non_proxy_hosts: ""
+        nexus_adminitrator_user: "admin"
+        nexus_administrator_password: "admin"

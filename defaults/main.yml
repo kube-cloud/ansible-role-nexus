@@ -67,7 +67,7 @@ nexus_karaf_datadir: "{{ nexus_datadir | regex_replace('\\/$', '') }}/karaf"
 nexus_karaf_start_location_console: false
 
 # Karaf Lock dir
-karaf_lock_dir: "{{ nexus_datadir | regex_replace('\\/$', '') }}/lock"
+nexus_karaf_lock_dir: "{{ nexus_datadir | regex_replace('\\/$', '') }}/lock"
 
 # Karaf local user console
 karaf_local_user_console: "karaf"
