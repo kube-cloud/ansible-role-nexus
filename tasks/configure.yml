@@ -98,6 +98,7 @@
 
 # Retrieve initial admin password
 - name: "({{ ansible_distribution }}) NX::CONFIG - Retrieve initial admin password"
+  block:
 
     # Wait for nexus administrator password file available
     - name: "({{ ansible_distribution }}) NX::CONFIG - Wait for nexus administrator password file available"
