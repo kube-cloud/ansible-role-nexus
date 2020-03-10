@@ -45,7 +45,7 @@
   block:
 
     # Generate Configurations from templates
-    - name: "({{ ansible_distribution }}) NX::CONFIG - Generate Configurations from templates"
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Generate Configurations from templates (systemctl)"
       template:
         src: "systemd/nexus.service.j2"
         dest: "{{ _nexus_service_dir }}/nexus.service"
@@ -59,7 +59,7 @@
         - molecule-idempotence-notest
 
     # Enable and Start nexus service (generate default admin password file on first start)
-    - name: "({{ ansible_distribution }}) NX::CONFIG - Enable and Start nexus service"
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Enable and Start nexus service (systemd)"
       systemd:
         name: "nexus.service"
         state: started
@@ -76,7 +76,7 @@
   block:
 
     # Create symlink for init.d nexus service
-    - name: "({{ ansible_distribution }}) NX::CONFIG - Create symlink for init.d nexus service"
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Create symlink for init.d nexus service (init.d)"
       file:
         src: "{{ _nexus_installdir }}/bin/nexus"
         dest: "/etc/init.d/nexus"
@@ -85,7 +85,7 @@
         state: link
 
     # Enable and Start nexus service (generate default admin password file on first start)
-    - name: "({{ ansible_distribution }}) NX::CONFIG - Enable and Start nexus service"
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Enable and Start nexus service (service)"
       service:
         name: "nexus"
         state: started

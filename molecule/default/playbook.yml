@@ -19,7 +19,7 @@
         nexus_logdir: "/kis/rmg/logs/"
         nexus_tempdir: "/kis/rmg/tmp"
         nexus_configdir: "/kis/rmg/configuration"
-        karaf_lock_dir: "/kis/rmg/datas/karaf/lock"
+        nexus_karaf_lock_dir: "/kis/rmg/datas/locks"
         nexus_karaf_start_location_console: false
         nexus_jvm_minimum_memory: "512m"
         nexus_jvm_maximum_memory: "1024m"
