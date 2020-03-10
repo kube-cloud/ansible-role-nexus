@@ -96,50 +96,37 @@
 
   when: "ansible_service_mgr != 'systemd'"
 
-# Wait for nexus administrator password file available
-- name: "({{ ansible_distribution }}) NX::CONFIG - Wait for nexus administrator password file available"
-  wait_for:
-    path: "{{ _nexus_default_password_file }}"
-    sleep: 3
-    state: present
-  changed_when: false
-  failed_when: false
-  check_mode: false
+# Retrieve initial admin password
+- name: "({{ ansible_distribution }}) NX::CONFIG - Retrieve initial admin password"
 
-# Check if generated administrator password file exists
-- name: "({{ ansible_distribution }}) NX::CONFIG - Check if generated administrator password file exists"
-  stat:
-    path: "{{ _nexus_default_password_file }}"
-  register: nexus_default_password_file
-  changed_when: false
-  failed_when: false
-  check_mode: false
+    # Wait for nexus administrator password file available
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Wait for nexus administrator password file available"
+      wait_for:
+        path: "{{ _nexus_default_password_file }}"
+        sleep: 3
+        state: present
 
-# Read base64 encoded password from file
-- name: "({{ ansible_distribution }}) NX::CONFIG::BLOCK - Slurp content of remote generated password file"
-  slurp:
-    src: "{{ _nexus_default_password_file }}"
-  register: slurped_content
+    # Read base64 encoded password from file
+    - name: "({{ ansible_distribution }}) NX::CONFIG::BLOCK - Slurp content of remote generated password file"
+      slurp:
+        src: "{{ _nexus_default_password_file }}"
+      register: slurped_content
 
-# Decode encoded password
-- name: "({{ ansible_distribution }}) NX::CONFIG::BLOCK - Decode encoded password"
-  set_fact:
-    initial_admin_password: "{{ slurped_content.content | b64decode }}"
+    # Decode encoded password
+    - name: "({{ ansible_distribution }}) NX::CONFIG::BLOCK - Decode encoded password"
+      set_fact:
+        current_admin_password: "{{ slurped_content.content | b64decode }}"
 
-# Ensure the default admin password is defined
-- name: "({{ ansible_distribution }}) NX::CONFIG - Ensure the default admin password is defined"
-  fail:
-    msg: >-
-      Failed to extract the initial administrator password.
-      Ensure that the file "{{ _nexus_default_password_file }}" exists.
-  when: initial_admin_password is not defined
+    # Ensure the default admin password is defined
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Ensure the default admin password is defined"
+      fail:
+        msg: >-
+          Failed to extract the initial administrator password.
+          Ensure that the file "{{ _nexus_default_password_file }}" exists.
+      when: current_admin_password is not defined
 
-# Initialize current password
-- name: "({{ ansible_distribution }}) NX::CONFIG::BLOCK - Decode encoded password"
-  set_fact:
-    current_admin_password: "{{ initial_admin_password }}"
   when:
-    - current_admin_password is not defined or current_admin_password != nexus_administrator_password
+    - current_admin_password is not defined
 
 # Wait for nexus iap availaible
 - name: "({{ ansible_distribution }}) NX::CONFIG - Wait for nexus API availaible"
@@ -224,3 +211,9 @@
       newAdminPassword: "{{ nexus_administrator_password }}"
   tags:
     - molecule-idempotence-notest
+
+# Initialize current password
+- name: "({{ ansible_distribution }}) NX::CONFIG::BLOCK - Decode encoded password"
+  set_fact:
+    current_admin_password: "{{ nexus_administrator_password }}"
+  when: current_admin_password != nexus_administrator_password
