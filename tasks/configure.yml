@@ -11,6 +11,7 @@
     backup: true
   loop:
     - { src: "bin/nexus.vmoptions.j2", dest: "{{ _nexus_installdir }}/bin/nexus.vmoptions" }
+    - { src: "bin/nexus.j2", dest: "{{ _nexus_installdir }}/bin/nexus" }
     - { src: "bin/nexus.rc.j2", dest: "{{ _nexus_installdir }}/bin/nexus.rc" }
     - { src: "etc/nexus.properties.j2", dest: "{{ _nexus_datadir }}/etc/nexus.properties" }
     - { src: "etc/logback/logback-access.xml.j2", dest: "{{ _nexus_installdir }}/etc/logback/logback-access.xml" }

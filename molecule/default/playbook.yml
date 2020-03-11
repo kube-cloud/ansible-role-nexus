@@ -56,4 +56,4 @@
         nexus_non_proxy_hosts: ""
         nexus_adminitrator_user: "admin"
         nexus_administrator_password: "admin"
-        nexus_service_type: "simple"
+        nexus_service_type: "forking"

@@ -214,5 +214,5 @@ nexus_adminitrator_user: "admin"
 # Nexus administrator password
 nexus_administrator_password: "admin"
 
-# Systemd service type (Because 'forking' service type don't work properly with nexus)
-nexus_service_type: "simple"
+# Systemd service type
+nexus_service_type: "forking"
