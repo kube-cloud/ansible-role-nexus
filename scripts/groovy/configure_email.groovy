@@ -13,7 +13,7 @@ jsonArguments = new JsonSlurper().parseText(args)
 // Update the current configuration with arguments values
 emailConfiguration.with {
         enabled = jsonArguments.enabled
-        host = jsonArguments.emailServerHost
+        host = jsonArguments.host
         port = Integer.valueOf(jsonArguments.port)
         username = jsonArguments.username
         password = jsonArguments.password

@@ -146,7 +146,7 @@ nexus_email_server_enabled: true
 nexus_email_server_host: "ssl0.ovh.net"
 
 # Nexus Email server port
-nexus_email_server_port: 465
+nexus_email_server_port: 587
 
 # Nexus Email server username
 nexus_email_server_username: "your.mail@your.dns.com"
@@ -161,19 +161,19 @@ nexus_email_from_address: "your.mail@your.dns.com"
 nexus_email_subject_prefix: "[Nexus]"
 
 # Nexus email server TLS enabled
-nexus_email_tls_enabled: true
+nexus_email_tls_enabled: false
 
 # Nexus Email server TLS required
-nexus_email_tls_required: true
+nexus_email_tls_required: false
 
 # Nexus Email server SSL On Connect enabled
-nexus_email_ssl_on_connect_enabled: true
+nexus_email_ssl_on_connect_enabled: false
 
 # Nexus Email server SSL check server identity enabled
-nexus_email_ssl_check_server_identity_enabled: true
+nexus_email_ssl_check_server_identity_enabled: false
 
 # Nexus Email server trustore enabled
-nexus_email_trust_store_enabled: true
+nexus_email_trust_store_enabled: false
 
 # Nexus Http proxy enabled
 nexus_http_proxy_enabled: false

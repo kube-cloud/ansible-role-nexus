@@ -170,7 +170,7 @@
       port: "{{ nexus_email_server_port }}"
       username: "{{ nexus_email_server_username }}"
       password: "{{ nexus_email_server_password }}"
-      fromAddress: "{{ nexus_email_from_address }}"
+      fromAdress: "{{ nexus_email_from_address }}"
       subjectPrefix: "{{ nexus_email_subject_prefix }}"
       startTlsEnabled: "{{ nexus_email_tls_enabled }}"
       startTlsRequired: "{{ nexus_email_tls_required }}"
