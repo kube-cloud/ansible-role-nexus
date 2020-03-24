@@ -216,3 +216,15 @@ nexus_administrator_password: "admin"
 
 # Systemd service type
 nexus_service_type: "forking"
+
+# Clean Store before create it
+nexus_blobstores_clean: true
+
+# Blobstore list
+nexus_blobstores: []
+# - name: bs1
+#   type: file
+#   path: /path/to/blobstore1
+# - name: bs2
+#   type: file
+#   path: /path/to/blobstore2

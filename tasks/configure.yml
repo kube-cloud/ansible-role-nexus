@@ -156,6 +156,9 @@
     - "configure_proxy"
     - "configure_admin_password"
     - "delete_repository"
+    - "create_repository"
+    - "delete_store"
+    - "create_store"
   tags:
     - molecule-idempotence-notest
 
@@ -202,6 +205,74 @@
   when: nexus_http_proxy_enabled or nexus_https_proxy_enabled
   tags:
     - molecule-idempotence-notest
+
+# Clean existing Blobstores before create
+- name: "({{ ansible_distribution }}) NX::CONFIG - Clean existing Blobstores ('{{ item.name }}' if needed)."
+  include_tasks: zz-execute-script.yml
+  vars:
+    script_name: delete_store
+    arguments:
+      name: "{{ item.name }}"
+  loop: "{{ nexus_blobstores }}"
+  when:
+    - nexus_blobstores_clean | bool
+    - nexus_blobstores | length > 0
+  tags:
+    - molecule-idempotence-notest
+
+# Blobstore block
+- name: "({{ ansible_distribution }}) NX::CONFIG - Initialize BlobStore"
+  block:
+
+    # Create directories for file blob stores
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Create directories for file blob stores ('{{ item.name }}' if needed)."
+      file:
+        path: "{{ _nexus_datadir }}/{{ item.path | regex_replace('^\\/', '') }}"
+        owner: "{{ nexus_owner }}"
+        group: "{{ nexus_group }}"
+        state: directory
+        recurse: true
+      loop: "{{ nexus_blobstores }}"
+      when:
+        - item.type == 'file'
+        - item.path is defined
+        - item.path | length > 0
+
+    # Initialize File BlobStores
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize File BlobStores ('{{ item.name }}')"
+      include_tasks: zz-execute-script.yml
+      vars:
+        script_name: create_store
+        arguments:
+          name: "{{ item.name }}"
+          type: "{{ item.type }}"
+          path: "{{ _nexus_datadir }}/{{ item.path | regex_replace('^\\/', '') }}"
+      loop: "{{ nexus_blobstores }}"
+      when:
+        - item.type | upper == 'FILE'
+        - item.path is defined
+        - item.path | length > 0
+      tags:
+        - molecule-idempotence-notest
+
+    # Initialize S3 BlobStores
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize S3 BlobStores ('{{ item.name }}')"
+      include_tasks: zz-execute-script.yml
+      vars:
+        script_name: create_store
+        arguments:
+          name: "{{ item.name }}"
+          type: "{{ item.type }}"
+          config: "{{ item.config }}"
+      loop: "{{ nexus_blobstores }}"
+      when:
+        - item.type | upper == 'S3'
+        - item.path is defined
+        - item.path | length > 0
+      tags:
+        - molecule-idempotence-notest
+
+  when: nexus_blobstores | length > 0
 
 # Initialize New Administrator password
 - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize New Administrator password"
