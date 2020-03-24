@@ -104,3 +104,14 @@ Ansible Role for Atlassian Nexus Installation.
         httpsProxyUsername: ""
         httpsProxyPassword: ""
         nonProxyHosts: ""
+        nexus_blobstores_clean: true
+        nexus_blobstores:
+          - name: "bs1"
+            type: file
+            path: "custom/blobstore1"
+          - name: "bs2"
+            type: file
+            path: "custom/blobstore2"
+          - name: "bs3"
+            type: file
+            path: "custom/blobstore3"
