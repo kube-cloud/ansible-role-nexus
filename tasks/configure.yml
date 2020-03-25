@@ -159,6 +159,8 @@
     - "create_repository"
     - "delete_store"
     - "create_store"
+    - "create_role"
+    - "create_user"
   tags:
     - molecule-idempotence-notest
 
@@ -239,7 +241,7 @@
         - item.path | length > 0
 
     # Initialize File BlobStores
-    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize File BlobStores ('{{ item.name }}')"
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize File BlobStores"
       include_tasks: zz-execute-script.yml
       vars:
         script_name: create_store
@@ -256,7 +258,7 @@
         - molecule-idempotence-notest
 
     # Initialize S3 BlobStores
-    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize S3 BlobStores ('{{ item.name }}')"
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize S3 BlobStores"
       include_tasks: zz-execute-script.yml
       vars:
         script_name: create_store
@@ -273,6 +275,241 @@
         - molecule-idempotence-notest
 
   when: nexus_blobstores | length > 0
+
+# Repository block
+- name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Repositories"
+  block:
+
+    # Initialize Docker Hosted Repositories
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Docker Hosted Repository"
+      include_tasks: zz-execute-script.yml
+      vars:
+        script_name: create_repository
+        arguments:
+          name: "{{ item.name }}"
+          format: "{{ item.format }}"
+          type: "{{ item.type }}"
+          online: "{{ item.online | default(true) }}"
+          store: "{{ item.store | default('default') }}"
+          strictContentValidation: "{{ item.strictContentValidation | default(false) }}"
+          members: "{{ item.members | default([]) }}"
+          writePolicy: "{{ item.writePolicy | default('ALLOW') }}"
+          cleanupPolicies: "{{ item.cleanupPolicies | default([]) }}"
+          dockerForceBasicAuth: "{{ item.dockerForceBasicAuth | default(false) }}"
+          dockerV1Enabled: "{{ item.dockerV1Enabled | default(true) }}"
+          dockerHttpPort: "{{ item.dockerHttpPort | default(1) }}"
+
+      loop: "{{ nexus_repositories }}"
+      when:
+        - item.name is defined
+        - item.name | length > 0
+        - item.type is defined
+        - item.type == "hosted"
+        - item.format is defined
+        - item.format == "docker"
+      tags:
+        - molecule-idempotence-notest
+
+    # Initialize Docker Proxy Repositories
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Docker Proxy Repository"
+      include_tasks: zz-execute-script.yml
+      vars:
+        script_name: create_repository
+        arguments:
+          name: "{{ item.name }}"
+          format: "{{ item.format }}"
+          type: "{{ item.type }}"
+          online: "{{ item.online | default(true) }}"
+          store: "{{ item.store | default('default') }}"
+          strictContentValidation: "{{ item.strictContentValidation | default(false) }}"
+          writePolicy: "{{ item.writePolicy | default('ALLOW') }}"
+          proxyUsername: "{{ item.proxyUsername | default('') }}"
+          proxyPassword: "{{ item.proxyPassword | default('') }}"
+          proxyRemoteUrl: "{{ item.proxyRemoteUrl | default('') }}"
+          proxyContentMaxAge: "{{ item.proxyContentMaxAge | default(1440) }}"
+          proxyMetadataMaxAge: "{{ item.proxyMetadataMaxAge | default(1440) }}"
+          negativeCacheEnabled: "{{ item.negativeCacheEnabled | default(true) }}"
+          negativeCachetimeToLive: "{{ item.negativeCachetimeToLive | default(1440) }}"
+          cleanupPolicies: "{{ item.cleanupPolicies | default([]) }}"
+          dockerProxyIndexType: "{{ item.dockerProxyIndexType | default('REGISTRY') }}"
+          dockerProxyUseTrustStoreForIndexAccess: "{{ item.dockerProxyUseTrustStoreForIndexAccess | default(false) }}"
+          dockerProxyForeignLayerUrlWhitelist: "{{ item.dockerProxyForeignLayerUrlWhitelist | default(['.*']) }}"
+          dockerProxyCacheForeignLayers: "{{ item.dockerProxyCacheForeignLayers | default(true) }}"
+
+      loop: "{{ nexus_repositories }}"
+      when:
+        - item.name is defined
+        - item.name | length > 0
+        - item.type is defined
+        - item.type == "proxy"
+        - item.format is defined
+        - item.format == "docker"
+      tags:
+        - molecule-idempotence-notest
+
+    # Initialize Maven Hosted Repositories
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Maven Hosted Repository"
+      include_tasks: zz-execute-script.yml
+      vars:
+        script_name: create_repository
+        arguments:
+          name: "{{ item.name }}"
+          format: "{{ item.format }}"
+          type: "{{ item.type }}"
+          online: "{{ item.online | default(true) }}"
+          store: "{{ item.store | default('default') }}"
+          strictContentValidation: "{{ item.strictContentValidation | default(false) }}"
+          writePolicy: "{{ item.writePolicy | default('ALLOW') }}"
+          cleanupPolicies: "{{ item.cleanupPolicies | default([]) }}"
+          mavenVersionPolicy: "{{ item.mavenVersionPolicy | default('SNAPSHOT') }}"
+          mavenLayoutPolicy: "{{ item.mavenLayoutPolicy | default('STRICT') }}"
+
+      loop: "{{ nexus_repositories }}"
+      when:
+        - item.name is defined
+        - item.name | length > 0
+        - item.type is defined
+        - item.type == "hosted"
+        - item.format is defined
+        - item.format == "maven2"
+      tags:
+        - molecule-idempotence-notest
+
+    # Initialize Maven Proxy Repositories
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Maven Proxy Repository"
+      include_tasks: zz-execute-script.yml
+      vars:
+        script_name: create_repository
+        arguments:
+          name: "{{ item.name }}"
+          format: "{{ item.format }}"
+          type: "{{ item.type }}"
+          online: "{{ item.online | default(true) }}"
+          store: "{{ item.store | default('default') }}"
+          strictContentValidation: "{{ item.strictContentValidation | default(false) }}"
+          writePolicy: "{{ item.writePolicy | default('ALLOW') }}"
+          proxyUsername: "{{ item.proxyUsername | default('') }}"
+          proxyPassword: "{{ item.proxyPassword | default('') }}"
+          proxyRemoteUrl: "{{ item.proxyRemoteUrl | default('') }}"
+          proxyContentMaxAge: "{{ item.proxyContentMaxAge | default(1440) }}"
+          proxyMetadataMaxAge: "{{ item.proxyMetadataMaxAge | default(1440) }}"
+          negativeCacheEnabled: "{{ item.negativeCacheEnabled | default(true) }}"
+          negativeCachetimeToLive: "{{ item.negativeCachetimeToLive | default(1440) }}"
+          cleanupPolicies: "{{ item.cleanupPolicies | default([]) }}"
+          mavenVersionPolicy: "{{ item.mavenVersionPolicy | default('SNAPSHOT') }}"
+          mavenLayoutPolicy: "{{ item.mavenLayoutPolicy | default('STRICT') }}"
+
+      loop: "{{ nexus_repositories }}"
+      when:
+        - item.name is defined
+        - item.name | length > 0
+        - item.type is defined
+        - item.type == "proxy"
+        - item.format is defined
+        - item.format == "maven2"
+      tags:
+        - molecule-idempotence-notest
+
+    # Initialize Other Repositories
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Repository"
+      include_tasks: zz-execute-script.yml
+      vars:
+        script_name: create_repository
+        arguments:
+          name: "{{ item.name }}"
+          format: "{{ item.format }}"
+          type: "{{ item.type }}"
+          online: "{{ item.online | default(true) }}"
+          store: "{{ item.store | default('default') }}"
+          strictContentValidation: "{{ item.strictContentValidation | default(false) }}"
+          members: "{{ item.members | default([]) }}"
+          writePolicy: "{{ item.writePolicy | default('ALLOW') }}"
+          repoDataDepth: "{{ item.repoDataDepth | default(0) }}"
+          layoutPolicy: "{{ item.layoutPolicy | default('') }}"
+          distribution: "{{ item.distribution | default('') }}"
+          keypair: "{{ item.keypair | default('') }}"
+          passphrase: "{{ item.passphrase | default('') }}"
+          proxyUsername: "{{ item.proxyUsername | default('') }}"
+          proxyPassword: "{{ item.proxyPassword | default('') }}"
+          proxyRemoteUrl: "{{ item.proxyRemoteUrl | default('') }}"
+          proxyContentMaxAge: "{{ item.proxyContentMaxAge | default(1440) }}"
+          proxyMetadataMaxAge: "{{ item.proxyMetadataMaxAge | default(1440) }}"
+          negativeCacheEnabled: "{{ item.negativeCacheEnabled | default(true) }}"
+          negativeCachetimeToLive: "{{ item.negativeCachetimeToLive | default(1440) }}"
+          cleanupPolicies: "{{ item.cleanupPolicies | default([]) }}"
+          dockerProxyIndexType: "{{ item.dockerProxyIndexType | default('REGISTRY') }}"
+          dockerProxyUseTrustStoreForIndexAccess: "{{ item.dockerProxyUseTrustStoreForIndexAccess | default(false) }}"
+          dockerProxyForeignLayerUrlWhitelist: "{{ item.dockerProxyForeignLayerUrlWhitelist | default(['.*']) }}"
+          dockerProxyCacheForeignLayers: "{{ item.dockerProxyCacheForeignLayers | default(true) }}"
+          dockerForceBasicAuth: "{{ item.dockerForceBasicAuth | default(false) }}"
+          dockerV1Enabled: "{{ item.dockerV1Enabled | default(true) }}"
+          dockerHttpPort: "{{ item.dockerHttpPort | default(1) }}"
+          mavenVersionPolicy: "{{ item.mavenVersionPolicy | default('SNAPSHOT') }}"
+          mavenLayoutPolicy: "{{ item.mavenLayoutPolicy | default('STRICT') }}"
+
+      loop: "{{ nexus_repositories }}"
+      when:
+        - item.name is defined
+        - item.name | length > 0
+        - item.type is defined
+        - item.format is defined
+        - item.format not in ["maven2", "docker"]
+      tags:
+        - molecule-idempotence-notest
+
+  when: nexus_repositories | length > 0
+
+# Roles block
+- name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Roles"
+  block:
+
+    # Initialize Roles
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Roles"
+      include_tasks: zz-execute-script.yml
+      vars:
+        script_name: create_role
+        arguments:
+          id: "{{ item.id }}"
+          name: "{{ item.name }}"
+          description: "{{ item.description | default('') }}"
+          permissions: "{{ item.permissions | default([]) }}"
+          roles: "{{ item.roles | default([]) }}"
+
+      loop: "{{ nexus_roles }}"
+      when:
+        - item.id is defined and item.id | length > 0
+        - item.name is defined and item.name | length > 0
+      tags:
+        - molecule-idempotence-notest
+
+  when: nexus_roles | length > 0
+
+# Users block
+- name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Users"
+  block:
+
+    # Initialize Users
+    - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize Users"
+      include_tasks: zz-execute-script.yml
+      vars:
+        script_name: create_user
+        arguments:
+          id: "{{ item.id }}"
+          lastName: "{{ item.lastName }}"
+          firstName: "{{ item.firstName | default('No First name') }}"
+          email: "{{ item.email | default('noeail@localhost') }}"
+          password: "{{ item.password | default('ch@ngeme') }}"
+          enabled: "{{ item.enabled | default(true) }}"
+          roles: "{{ item.roles | default([]) }}"
+
+      loop: "{{ nexus_users }}"
+      when:
+        - item.id is defined and item.id | length > 0
+        - item.lastName is defined and item.lastName | length > 0
+      tags:
+        - molecule-idempotence-notest
+
+  when: nexus_users | length > 0
 
 # Initialize New Administrator password
 - name: "({{ ansible_distribution }}) NX::CONFIG - Initialize New Administrator password"

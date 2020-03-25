@@ -69,12 +69,12 @@ Ansible Role for Atlassian Nexus Installation.
         nexus_logdir: "/kis/rmg/logs/"
         nexus_tempdir: "/kis/rmg/tmp"
         nexus_configdir: "/kis/rmg/configuration"
-        karaf_lock_dir: "/kis/rmg/datas/karaf/lock"
+        nexus_karaf_lock_dir: "/kis/rmg/datas/locks"
         nexus_karaf_start_location_console: false
         nexus_jvm_minimum_memory: "512m"
         nexus_jvm_maximum_memory: "1024m"
         nexus_jvm_maximum_direct_memory: "1024m"
-        nexus_jvm_log_file: "/kis/rmg/logs/jvm.log"
+        nexus_jvm_log_file: "{{ nexus_logdir | regex_replace('\\/$', '') }}/jvm.log"
         nexus_prefered_ipv4: true
         nexus_application_host: "0.0.0.0"
         nexus_application_port: 8080
@@ -93,17 +93,20 @@ Ansible Role for Atlassian Nexus Installation.
         nexus_email_ssl_on_connect_enabled: true
         nexus_email_ssl_check_server_identity_enabled: true
         nexus_email_trust_store_enabled: true
-        httpProxyEnabled: false
-        httpProxyHost: ""
-        httpProxyPort: 80
-        httpProxyUsername: ""
-        httpProxyPassword: ""
-        httpsProxyEnabled: false
-        httpsProxyHost: ""
-        httpsProxyPort: 443
-        httpsProxyUsername: ""
-        httpsProxyPassword: ""
-        nonProxyHosts: ""
+        nexus_http_proxy_enabled: false
+        nexus_http_proxy_host: ""
+        nexus_http_proxy_port: 80
+        nexus_http_proxy_username: ""
+        nexus_http_proxy_password: ""
+        nexus_https_proxy_enabled: false
+        nexus_https_proxy_host: ""
+        nexus_https_proxy_port: 443
+        nexus_https_proxy_username: ""
+        nexus_https_proxy_password: ""
+        nexus_non_proxy_hosts: ""
+        nexus_adminitrator_user: "admin"
+        nexus_administrator_password: "admin"
+        nexus_service_type: "forking"
         nexus_blobstores_clean: true
         nexus_blobstores:
           - name: "bs1"
@@ -115,3 +118,102 @@ Ansible Role for Atlassian Nexus Installation.
           - name: "bs3"
             type: file
             path: "custom/blobstore3"
+        nexus_repositories:
+          - name: "mvn-hosted-repo-snapshot"
+            type: "hosted"
+            format: "maven2"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW_ONCE"
+            cleanupPolicies: []
+            mavenVersionPolicy: "SNAPSHOT"
+            mavenLayoutPolicy: "PERMISSIVE"
+          - name: "mvn-hosted-repo-release"
+            type: "hosted"
+            format: "maven2"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW"
+            cleanupPolicies: []
+            mavenVersionPolicy: "RELEASE"
+            mavenLayoutPolicy: "STRICT"
+          - name: "mvn-proxy-repo1-central"
+            type: "proxy"
+            format: "maven2"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW"
+            cleanupPolicies: []
+            proxyUsername: ""
+            proxyPassword: ""
+            proxyRemoteUrl: "https://repo1.maven.org/maven2/"
+            proxyContentMaxAge: -1
+            proxyMetadataMaxAge: 1440
+            negativeCacheEnabled: true
+            negativeCachetimeToLive: 1440
+          - name: "docker-hosted-repo-release"
+            type: "hosted"
+            format: "docker"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW"
+            cleanupPolicies: []
+            dockerForceBasicAuth: false
+            dockerV1Enabled: true
+            dockerHttpPort: 0
+          - name: "docker-proxy-repo-release"
+            type: "proxy"
+            format: "docker"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW"
+            cleanupPolicies: []
+            dockerProxyIndexType: "REGISTRY"
+            dockerProxyUseTrustStoreForIndexAccess: true
+            dockerProxyCacheForeignLayers: true
+            dockerProxyForeignLayerUrlWhitelist:
+              - ".*"
+              - ".*\\.docker\\.kube-cloud\\.com"
+            proxyUsername: "admin"
+            proxyPassword: "admin"
+            proxyRemoteUrl: "https://registry-1.docker.io"
+            proxyContentMaxAge: -1
+            proxyMetadataMaxAge: 1440
+            negativeCacheEnabled: true
+            negativeCachetimeToLive: 1440
+        nexus_roles:
+          - id: "kc-role1"
+            name: "kc-role1"
+            description: "KubeCloud role 1"
+            permissions:
+              - "nx-analytics-all"
+              - "nx-apikey-all"
+              - "nx-atlas-all"
+              - "nx-blobstores-all"
+            roles:
+              - "nx-anonymous"
+          - id: "kc-role2"
+            name: "kc-role2"
+            description: "KubeCloud role 2"
+            permissions:
+              - "nx-all"
+        nexus_users:
+          - id: "kc-user1"
+            lastName: "Last Name 1"
+            firstName: "First Name 1"
+            email: "noreply@kube-cloud.com"
+            password: "ch@ngeThat"
+            roles:
+              - "kc-role1"
+          - id: "kc-user2"
+            lastName: "Last Name 2"
+            firstName: "First Name 2"
+            email: "noreply@kube-cloud.com"
+            password: "ch@ngeThat"
+            roles:
+              - "kc-role2"

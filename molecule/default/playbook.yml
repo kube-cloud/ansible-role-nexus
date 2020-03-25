@@ -68,3 +68,102 @@
           - name: "bs3"
             type: file
             path: "custom/blobstore3"
+        nexus_repositories:
+          - name: "mvn-hosted-repo-snapshot"
+            type: "hosted"
+            format: "maven2"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW_ONCE"
+            cleanupPolicies: []
+            mavenVersionPolicy: "SNAPSHOT"
+            mavenLayoutPolicy: "PERMISSIVE"
+          - name: "mvn-hosted-repo-release"
+            type: "hosted"
+            format: "maven2"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW"
+            cleanupPolicies: []
+            mavenVersionPolicy: "RELEASE"
+            mavenLayoutPolicy: "STRICT"
+          - name: "mvn-proxy-repo1-central"
+            type: "proxy"
+            format: "maven2"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW"
+            cleanupPolicies: []
+            proxyUsername: ""
+            proxyPassword: ""
+            proxyRemoteUrl: "https://repo1.maven.org/maven2/"
+            proxyContentMaxAge: -1
+            proxyMetadataMaxAge: 1440
+            negativeCacheEnabled: true
+            negativeCachetimeToLive: 1440
+          - name: "docker-hosted-repo-release"
+            type: "hosted"
+            format: "docker"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW"
+            cleanupPolicies: []
+            dockerForceBasicAuth: false
+            dockerV1Enabled: true
+            dockerHttpPort: 0
+          - name: "docker-proxy-repo-release"
+            type: "proxy"
+            format: "docker"
+            online: true
+            store: "default"
+            strictContentValidation: true
+            writePolicy: "ALLOW"
+            cleanupPolicies: []
+            dockerProxyIndexType: "REGISTRY"
+            dockerProxyUseTrustStoreForIndexAccess: true
+            dockerProxyCacheForeignLayers: true
+            dockerProxyForeignLayerUrlWhitelist:
+              - ".*"
+              - ".*\\.docker\\.kube-cloud\\.com"
+            proxyUsername: "admin"
+            proxyPassword: "admin"
+            proxyRemoteUrl: "https://registry-1.docker.io"
+            proxyContentMaxAge: -1
+            proxyMetadataMaxAge: 1440
+            negativeCacheEnabled: true
+            negativeCachetimeToLive: 1440
+        nexus_roles:
+          - id: "kc-role1"
+            name: "kc-role1"
+            description: "KubeCloud role 1"
+            permissions:
+              - "nx-analytics-all"
+              - "nx-apikey-all"
+              - "nx-atlas-all"
+              - "nx-blobstores-all"
+            roles:
+              - "nx-anonymous"
+          - id: "kc-role2"
+            name: "kc-role2"
+            description: "KubeCloud role 2"
+            permissions:
+              - "nx-all"
+        nexus_users:
+          - id: "kc-user1"
+            lastName: "Last Name 1"
+            firstName: "First Name 1"
+            email: "noreply@kube-cloud.com"
+            password: "ch@ngeThat"
+            roles:
+              - "kc-role1"
+          - id: "kc-user2"
+            lastName: "Last Name 2"
+            firstName: "First Name 2"
+            email: "noreply@kube-cloud.com"
+            password: "ch@ngeThat"
+            roles:
+              - "kc-role2"

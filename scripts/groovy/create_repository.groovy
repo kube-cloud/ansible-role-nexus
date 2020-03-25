@@ -155,14 +155,14 @@ try {
         // Initialize proxy properties
         configuration.attributes['proxy'] = [
         	remoteUrl: repoToCreate.proxyRemoteUrl,
-        	contentMaxAge: repoToCreate.get('proxyContentMaxAge', 1440.0),
-        	metadataMaxAge: repoToCreate.get('proxyMetadataMaxAge', 1440.0)
+        	contentMaxAge: repoToCreate.get('proxyContentMaxAge', 1440.0) as int,
+        	metadataMaxAge: repoToCreate.get('proxyMetadataMaxAge', 1440.0) as int
         ]
         
         // Initialize negate properties
         configuration.attributes['negativeCache'] = [
         	enabled: repoToCreate.get('negativeCacheEnabled', true),
-        	timeToLive: repoToCreate.get('negativeCachetimeToLive', 1440.0)
+        	timeToLive: repoToCreate.get('negativeCachetimeToLive', 1440.0) as int
         ]
 	}
 	
@@ -197,11 +197,14 @@ try {
     // In case of docker repo
     if (repoToCreate.format == 'docker') {
     	
+    	// String httpPort
+    	String strPort = "" + repoToCreate.get('dockerHttpPort')
+    	
     	// Initialize custom docker repository properties
     	configuration.attributes['docker'] = [
     		forceBasicAuth: repoToCreate.dockerForceBasicAuth,
     		v1Enabled: repoToCreate.dockerV1Enabled,
-    		httpPort: repoToCreate.get('dockerHttpPort', '')
+    		httpPort: (strPort != null && strPort.isInteger() && (strPort as int) > 0 ) ? strPort as int : null
         ]
     }
 	
@@ -210,8 +213,8 @@ try {
     	
     	// Initialize maven properties
     	configuration.attributes['maven'] = [
-    		versionPolicy: repoToCreate.mavenVersionPolicy.toUpperCase(),
-    		layoutPolicy : repoToCreate.mavenLayoutPolicy.toUpperCase()
+    		versionPolicy: repoToCreate.mavenVersionPolicy != null ? repoToCreate.mavenVersionPolicy.toUpperCase() : null,
+    		layoutPolicy : repoToCreate.mavenLayoutPolicy != null ? repoToCreate.mavenLayoutPolicy.toUpperCase() : null
         ]
     }
 	
