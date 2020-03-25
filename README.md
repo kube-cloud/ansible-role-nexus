@@ -190,18 +190,23 @@ Ansible Role for Atlassian Nexus Installation.
           - id: "kc-role1"
             name: "kc-role1"
             description: "KubeCloud role 1"
-            permissions:
-              - "nx-analytics-all"
-              - "nx-apikey-all"
-              - "nx-atlas-all"
-              - "nx-blobstores-all"
+            privileges:
+              - "nx-repository-view-docker-docker-proxy-repo-release-read"
+              - "nx-repository-view-docker-docker-proxy-repo-release-browse"
+              - "nx-repository-view-docker-docker-hosted-repo-release-read"
+              - "nx-repository-view-docker-docker-hosted-repo-release-browse"
             roles:
               - "nx-anonymous"
           - id: "kc-role2"
             name: "kc-role2"
             description: "KubeCloud role 2"
-            permissions:
-              - "nx-all"
+            privileges:
+              - "nx-repository-view-maven2-mvn-proxy-repo1-central-read"
+              - "nx-repository-view-maven2-mvn-proxy-repo1-central-browse"
+              - "nx-repository-view-maven2-mvn-hosted-repo-snapshot-read"
+              - "nx-repository-view-maven2-mvn-hosted-repo-snapshot-browse"
+              - "nx-repository-view-maven2-mvn-hosted-repo-release-read"
+              - "nx-repository-view-maven2-mvn-hosted-repo-release-browse"
         nexus_users:
           - id: "kc-user1"
             lastName: "Last Name 1"

@@ -472,7 +472,7 @@
           id: "{{ item.id }}"
           name: "{{ item.name }}"
           description: "{{ item.description | default('') }}"
-          permissions: "{{ item.permissions | default([]) }}"
+          privileges: "{{ item.privileges | default([]) }}"
           roles: "{{ item.roles | default([]) }}"
 
       loop: "{{ nexus_roles }}"
