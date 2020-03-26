@@ -9,11 +9,14 @@ nexus_download_base_url: "https://sonatype-download.global.ssl.fastly.net/reposi
 # Nexus archive file name
 nexus_archive_file_name: "nexus-{{ nexus_version }}-unix.tar.gz"
 
+# Nexus Checksum
+nexus_checksum: "sha1:87b52cfdfdb9f49d3a1d0d0c49bc7e0eee80dd14"
+
 # Nexus download base URL (Checksum generated with : openssl sha1 /path/to/nexus/archive.tar.gz).
 nexus_download_details:
   url: "{{ nexus_download_base_url }}/{{ nexus_archive_file_name }}"
   dest: "/tmp/{{ nexus_archive_file_name }}"
-  checksum: "sha1:87b52cfdfdb9f49d3a1d0d0c49bc7e0eee80dd14"
+  checksum: "{{ nexus_checksum }}"
 
 # Nexus Owner
 nexus_owner: "nexus"
