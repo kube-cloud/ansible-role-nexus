@@ -77,6 +77,7 @@
     _nexus_default_password_file: "{{ nexus_datadir | regex_replace('\\/$', '') }}/admin.password"
     _nexus_default_user: "admin"
     _nexus_api_script_uri: "{{ (nexus_version is version('3.8.0', '<')) | ternary('/service/siesta/rest/v1/script', '/service/rest/v1/script') }}"
+    _nexus_jvm_truststore_file: "{{ nexus_datadir | regex_replace('\\/$', '') }}/security/nexus.truststore"
 
 # Create group if not exists
 - name: "({{ ansible_distribution }}) NX::INIT - Create group if not exists"
@@ -128,4 +129,16 @@
     - dest: "{{ _nexus_pid_dir }}"
     - dest: "{{ _nexus_historydir }}"
     - dest: "{{ _nexus_karaf_lock_dir }}"
+  tags: nexus
+
+# Prepare Security directory if needed
+- name: "({{ ansible_distribution }}) NX::INIT - Prepare Security directory if needed"
+  file:
+    dest: "{{ _nexus_jvm_truststore_file | dirname }}"
+    owner: "{{ nexus_owner }}"
+    group: "{{ nexus_group }}"
+    mode: "{{ _nexus_file_mode }}"
+    state: "directory"
+  when:
+    - nexus_jvm_truststore_install | bool
   tags: nexus

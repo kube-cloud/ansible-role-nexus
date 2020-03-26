@@ -91,6 +91,9 @@ karaf_shell_history_max_size: 500
 karaf_instance_name: "Karaf"
 
 # JVM parameters
+nexus_jvm_truststore_install: false
+nexus_jvm_truststore_src_file: "security/truststore"
+nexus_jvm_truststore_password: "changeit"
 nexus_jvm_minimum_memory: "512m"
 nexus_jvm_maximum_memory: "1024m"
 nexus_jvm_maximum_direct_memory: "1024m"

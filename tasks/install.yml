@@ -33,3 +33,13 @@
   tags:
     - nexus
     - molecule-idempotence-notest
+
+# Install Nexus Trustore if needed
+- name: "({{ ansible_distribution }}) NX::INSTALL - Install Nexus Trustore if needed"
+  copy:
+    src: "{{ nexus_jvm_truststore_src_file }}"
+    dest: "{{ _nexus_jvm_truststore_file }}"
+    mode: u+rw-x,g+r-wx,g+r-wx
+    force: true
+  when:
+    - nexus_jvm_truststore_install
