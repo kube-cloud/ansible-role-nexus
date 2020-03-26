@@ -58,7 +58,8 @@ Ansible Role for Atlassian Nexus Installation.
       import_role:
         name: ansible-role-nexus
       vars:
-        nexus_version: "3.21.1-01"
+        nexus_version: "3.21.2-03"
+        nexus_checksum: "sha1:f7dd02a755f5a313380dbd18f5c0d64c0b5419fb"
         nexus_owner: "root"
         nexus_group: "root"
         nexus_create_home: false
