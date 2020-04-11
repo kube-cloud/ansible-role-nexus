@@ -36,6 +36,9 @@ nexus_shell: "/usr/sbin/nologin"
 # Nexus Install directory
 nexus_installdir: "/opt/sonatype/nexus-{{ nexus_version }}"
 
+# Nexus backup dir
+nexus_backupdir: "/var/lib/sonatype-backups/nexus"
+
 # Nexus Data directory
 nexus_datadir: "/var/lib/sonatype-work/nexus"
 

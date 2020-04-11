@@ -61,6 +61,7 @@
     _nexus_file_mode: "0755"
     _nexus_extracted_dir: "/tmp/nexus_extracted"
     _nexus_installdir: "{{ nexus_installdir | regex_replace('\\/$', '') }}"
+    _nexus_backupdir: "{{ nexus_backupdir | regex_replace('\\/$', '') }}"
     _nexus_datadir: "{{ nexus_datadir | regex_replace('\\/$', '') }}"
     _nexus_logdir: "{{ nexus_logdir | regex_replace('\\/$', '') }}"
     _nexus_tempdir: "{{ nexus_tempdir | regex_replace('\\/$', '') }}"
@@ -129,6 +130,8 @@
     - dest: "{{ _nexus_pid_dir }}"
     - dest: "{{ _nexus_historydir }}"
     - dest: "{{ _nexus_karaf_lock_dir }}"
+    - dest: "{{ _nexus_karaf_lock_dir }}"
+    - dest: "{{ _nexus_backupdir }}"
   tags: nexus
 
 # Prepare Security directory if needed
