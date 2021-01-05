@@ -4,7 +4,7 @@
 nexus_version: "3.21.1-01"
 
 # Nexus download base URL.
-nexus_download_base_url: "https://sonatype-download.global.ssl.fastly.net/repository/repositoryManager/3/"
+nexus_download_base_url: "https://downloads.sonatype.com/nexus/3/"
 
 # Nexus archive file name
 nexus_archive_file_name: "nexus-{{ nexus_version }}-unix.tar.gz"
