@@ -4,7 +4,7 @@
 nexus_version: "3.21.1-01"
 
 # Nexus download base URL.
-nexus_download_base_url: "https://downloads.sonatype.com/nexus/3/"
+nexus_download_base_url: "https://download.sonatype.com/nexus/3/"
 
 # Nexus archive file name
 nexus_archive_file_name: "nexus-{{ nexus_version }}-unix.tar.gz"
@@ -14,7 +14,7 @@ nexus_checksum: "sha1:87b52cfdfdb9f49d3a1d0d0c49bc7e0eee80dd14"
 
 # Nexus download base URL (Checksum generated with : openssl sha1 /path/to/nexus/archive.tar.gz).
 nexus_download_details:
-  url: "{{ nexus_download_base_url }}/{{ nexus_archive_file_name }}"
+  url: "{{ nexus_download_base_url | regex_replace('\\/$', '') }}/{{ nexus_archive_file_name }}"
   dest: "/tmp/{{ nexus_archive_file_name }}"
   checksum: "{{ nexus_checksum }}"
 

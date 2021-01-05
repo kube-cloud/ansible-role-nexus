@@ -9,7 +9,7 @@
         name: ansible-role-nexus
       vars:
         nexus_version: "3.21.1-01"
-        nexus_download_base_url: "https://downloads.sonatype.com/nexus/3/"
+        nexus_download_base_url: "https://download.sonatype.com/nexus/3/"
         nexus_archive_file_name: "nexus-{{ nexus_version }}-unix.tar.gz"
         nexus_jvm_truststore_install: true
         nexus_jvm_truststore_src_file: "security/truststore.jks"
