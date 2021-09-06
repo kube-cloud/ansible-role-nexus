@@ -15,19 +15,22 @@ lint: |
 
 platforms:
 
-  - name: nexus3-oss-default
-    hostname: nexus3-oss-default
-    image: thoteam/molecule_apache_openjdk8:centos7
-    command: /usr/sbin/init
+  - name: nexus3-oss-centos-8
+    hostname: nexus3-oss-centos8
+    image: thoteam/molecule_apache_openjdk8:centos8
     pull: true
     pre_build_image: true
     privileged: true
+    published_ports:
+      - 8095:443
+    override_command: false
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - "${MOLECULE_PROJECT_DIRECTORY}/molecule/.nexus-downloads:/nexus-downloads"
     groups:
       - nexus
     networks: &nexus_networks
       - name: nexus-default
-    volumes:
-      - "${MOLECULE_PROJECT_DIRECTORY}/molecule/.nexus-downloads:/nexus-downloads"
 
   - name: slapd-server-mock
     hostname: slapd-server-mock
@@ -55,7 +58,13 @@ scenario:
     - create
     - converge
   test_sequence:
-    - lint
+    - destroy
+    - create
+    - converge
+    - idempotence
+    - check
+    - verify
+    - destroy
 
 verifier:
   name: testinfra

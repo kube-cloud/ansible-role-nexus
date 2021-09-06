@@ -15,13 +15,15 @@ lint: |
 
 platforms:
 
-  - name: nexus3-oss-default
-    hostname: nexus3-oss-default
-    image: thoteam/molecule_apache_openjdk8:centos7
-    command: /usr/sbin/init
+  - name: nexus3-oss-debian-buster
+    hostname: nexus3-oss-debian-buster
+    image: thoteam/molecule_apache_openjdk8:debian_buster
+    command: lib/systemd/systemd
     pull: true
     pre_build_image: true
     privileged: true
+    published_ports:
+      - 8091:443
     groups:
       - nexus
     networks: &nexus_networks
@@ -55,7 +57,13 @@ scenario:
     - create
     - converge
   test_sequence:
-    - lint
+    - destroy
+    - create
+    - converge
+    - idempotence
+    - check
+    - verify
+    - destroy
 
 verifier:
   name: testinfra

@@ -1,50 +1,38 @@
 ---
-# Initialize the Language
+branches:
+  only:
+    - master
+
+sudo: required
+
 language: python
 
-# Declare Docker Service to be used in the build
-services: docker
+python: 3.8
 
-# Environments variables for test
-env:
-    # Global
-    global:
-        - ROLE_NAME: nexus
-        - AUTHOR: jetune
-    matrix:
-        - MOLECULE_DISTRO: kubecloudsas/docker-ansible-test:v1.1.0-centos7-py3
-          MOLECULE_NAME: centos7
-        - MOLECULE_DISTRO: kubecloudsas/docker-ansible-test:v1.1.0-xenial-py3
-          MOLECULE_NAME: xenial
-        - MOLECULE_DISTRO: kubecloudsas/docker-ansible-test:v1.1.0-bionic-py3
-          MOLECULE_NAME: bionic
+cache:
+  pip: true
+  directories:
+    - molecule/.nexus-downloads/
 
-# Before install actions
-before_install:
-    - sudo docker pull ${MOLECULE_DISTRO}
+services:
+  - docker
 
-# Installation actions
 install:
-    # Install Test tools
-    - pip3 install ansible molecule docker molecule-docker flake8
+  - pip install --upgrade --upgrade-strategy eager -r requirements.txt
 
-    # Uninstall testinfra 1.19.0
-    - pip3 uninstall -y testinfra==1.19.0
+env:
+  - SCENARIO=default
+  - SCENARIO=default-centos8
+  - SCENARIO=default-debian_buster
+  - SCENARIO=default-ubuntu_18.04
 
-    # Install testinfra 3.0.5
-    - pip3 install testinfra==3.0.5
+script: |
+  if [ "${SCENARIO}" == "default" ]; then
+    ./tests/test_groovySyntax.sh
+    molecule test
+  else
+    molecule test -s "${SCENARIO}"
+  fi
 
-# Test scripts
-script:
-    # Check ansible version
-    - ansible --version
-
-    # Check ñolecule version
-    - molecule --version
-
-    # Run Tests
-    - molecule test --all
-
-# Norifications
 notifications:
-    webhooks: https://galaxy.ansible.com/api/v1/notifications/
+  webhooks: https://galaxy.ansible.com/api/v1/notifications/

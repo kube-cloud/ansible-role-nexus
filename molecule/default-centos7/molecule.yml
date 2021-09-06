@@ -15,13 +15,15 @@ lint: |
 
 platforms:
 
-  - name: nexus3-oss-default
-    hostname: nexus3-oss-default
+  - name: nexus3-oss-centos-7
+    hostname: nexus3-oss-centos7
     image: thoteam/molecule_apache_openjdk8:centos7
-    command: /usr/sbin/init
     pull: true
     pre_build_image: true
     privileged: true
+    published_ports:
+      - 8090:443
+    override_command: false
     groups:
       - nexus
     networks: &nexus_networks
@@ -55,7 +57,13 @@ scenario:
     - create
     - converge
   test_sequence:
-    - lint
+    - destroy
+    - create
+    - converge
+    - idempotence
+    - check
+    - verify
+    - destroy
 
 verifier:
   name: testinfra
